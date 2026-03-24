@@ -1,44 +1,70 @@
 const Product = require("../models/product.models");
-const { validationResult } = require('express-validator');
-const moddel = require("../models/user-models");
+const { validationResult } = require("express-validator");
 const Order = require("../models/Order.models");
 const { v2: cloudinary } = require("cloudinary");
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "products",
+    allowed_formats: ["jpg", "png", "webp"],
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Controller
 module.exports.createProduct = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   }
 
   try {
-    const { name, price, description, discount, isNewCollection, stock, category ,rating} = req.body;
-    const result = await cloudinary.uploader.upload(req.file.path);
-    const imageUrl = result.secure_url;
+    const {
+      name,
+      price,
+      description,
+      discount,
+      isNewCollection,
+      stock,
+      category,
+      rating,
+    } = req.body;
+
+    // Cloudinary automatically gives secure_url
+    const imageUrl = req.file.path ? req.file.path : req.file.url;
+
     const product = await Product.create({
-      category: category,
-      name: name,
-      price:price,
-      description:description,
-      discount: discount,
-      isNewCollection: isNewCollection,
-      stock: stock,
-      image: imageUrl, 
-      rating:rating,
+      category,
+      name,
+      price,
+      description,
+      discount,
+      isNewCollection,
+      stock,
+      image: imageUrl,
+      rating,
     });
 
     res.status(201).json({ message: "Product created successfully", product });
     console.log(product);
-    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 module.exports.getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();

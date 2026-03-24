@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
- origin: "https://e-commers-fernted.vercel.app",
+ origin: "https://e-commers-fernted.vercel.app/",
   credentials: true
 }));
 

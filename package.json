@@ -2,7 +2,7 @@
   "dependencies": {
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
-    "cloudinary": "^2.9.0",
+    "cloudinary": "^1.37.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -12,6 +12,7 @@
     "meilisearch": "^0.56.0",
     "mongoose": "^9.0.2",
     "multer": "^2.1.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.14"
   }
 }
